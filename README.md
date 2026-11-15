@@ -28,8 +28,8 @@ python run_module4.py rank --case examples/demo_case.json --csv out/detail.csv -
 python run_module4.py sweep --key weight_aging --values 0,0.15,0.3,0.6,1.0
 
 # 4. run Module 3 S0-S4 with this ranking wired in, then compare S2 against S1
-python run_module4.py integrate --module3 ../第三模块/module3 \
-    --dataset ../第三模块/module3/fixtures/pilot/low_rmb_liquidity/seed_1001
+python run_module4.py integrate --module3 ../module3 \
+    --dataset ../module3/fixtures/pilot/low_rmb_liquidity/seed_1001
 
 # 5. the unit test suite
 python run_module4.py selftest
@@ -53,13 +53,12 @@ modules with (Python 3.10+; only `dataclasses`/`typing` syntax from 3.10 is used
 | 30-seed check against the proposal's expected findings | `python analysis/check_alignment.py paired`, [`docs/proposal_alignment.md`](docs/proposal_alignment.md) |
 
 Verification evidence (commands + real console output) is in
-[`docs/verification.md`](docs/verification.md); the Chinese run guide is
-[`docs/使用说明_中文.md`](docs/使用说明_中文.md); whether the results match the
+[`docs/verification.md`](docs/verification.md); whether the results match the
 proposal's §5.1 expectations is answered in
 [`docs/proposal_alignment.md`](docs/proposal_alignment.md).
 
 ```
-第四模块/
+/
 ├── run_module4.py            command-line entry point (demo / rank / sweep / impact / integrate)
 ├── module4_rank.py           the file Module 3 imports (exposes rank_payments)
 ├── m4rank/
@@ -188,8 +187,8 @@ Wiring options (both verified):
 
 ```bash
 # A. recommended: put this folder on PYTHONPATH, copy nothing
-set PYTHONPATH=C:\path\to\第四模块
-python ..\第三模块\module3\run_engine.py --dataset <dataset> --strategy S2
+set PYTHONPATH=C:\path\to\module4
+python ..\module3\run_engine.py --dataset <dataset> --strategy S2
 
 # B. drop module4_rank.py + m4rank/ into module3/m3engine/ and set
 set M3_MODULE4_MODULE=m3engine.module4_rank
