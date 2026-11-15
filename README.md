@@ -50,10 +50,13 @@ modules with (Python 3.10+; only `dataclasses`/`typing` syntax from 3.10 is used
 | Small before/after sorting cases | `run_module4.py demo`, `examples/demo_case.json` |
 | S2 / S4 ranking implementation notes | `docs/s2_s4_integration.md` |
 | Check whether ordinary / large payments are hurt | `python run_module4.py impact --run <dir> --baseline <dir>` |
+| 30-seed check against the proposal's expected findings | `python analysis/check_alignment.py paired`, [`docs/proposal_alignment.md`](docs/proposal_alignment.md) |
 
 Verification evidence (commands + real console output) is in
 [`docs/verification.md`](docs/verification.md); the Chinese run guide is
-[`docs/使用说明_中文.md`](docs/使用说明_中文.md).
+[`docs/使用说明_中文.md`](docs/使用说明_中文.md); whether the results match the
+proposal's §5.1 expectations is answered in
+[`docs/proposal_alignment.md`](docs/proposal_alignment.md).
 
 ```
 第四模块/
@@ -67,9 +70,11 @@ Verification evidence (commands + real console output) is in
 │   ├── cases.py              load the frozen decision-event cases
 │   ├── sensitivity.py        weight / normaliser sweep
 │   └── impact.py             priority and large-payment diagnostic
+├── analysis/check_alignment.py   paired 30-seed test of the proposal's expectations
 ├── examples/demo_case.json   11 queued instructions at t = 1800 s
 ├── tests/test_module4.py     59 tests
-└── docs/                     formula, S2/S4 notes, Module 3 hand-over, verification
+└── docs/                     formula, S2/S4 notes, Module 3 hand-over, verification,
+                              proposal_alignment (does the result match the proposal?)
 ```
 
 ---
@@ -208,11 +213,14 @@ diagnostic.
 | Purity | `queue`, `state`, `config` byte-identical before/after the call |
 | Monotonicity of `D` and `A` | asserted over a slack/waiting sweep |
 | End-to-end on `pilot/low_rmb_liquidity/seed_1001` | S2 vs S1: URGENT mean delay 134.5 s → 97.5 s, HIGH 68.8 s → 56.3 s, NORMAL p95 262.5 s → 302.0 s, FX trades 64 → 62 |
+| Formal set, 7 scenarios × 30 seeds, paired + 95% CI | URGENT mean **and** P95 delay lower in **7/7** scenarios (CI excludes 0); NORMAL completion **lower** in `payment_surge` (−4.8 pp) and `large_payments` (−6.2 pp) — see [`docs/proposal_alignment.md`](docs/proposal_alignment.md) |
 
-The NORMAL-P95 regression is a real finding, not a bug: concentrating RMB on urgent
-and near-deadline instructions delays the tail of the ordinary queue. Module 6 owns
-the official metric set and the confidence intervals — the numbers in §6 are a
-Module 4 diagnostic only.
+The single-seed row above is a demonstration, not evidence: it suggested a NORMAL-P95
+regression that the 30-seed paired test does **not** confirm (NORMAL P95 is −0.5 s in
+`baseline` and +7.1 s in `low_rmb_liquidity`, neither significant). The real, robust
+fairness cost is a **completion-rate** effect in the two heaviest stress scenarios, and
+it is larger than one seed could show. Cite `docs/proposal_alignment.md`, not §6, in
+the report. Module 6 owns the official metric set and the confidence intervals.
 
 ---
 
@@ -235,3 +243,10 @@ Module 4 diagnostic only.
    scope for the integer-second Module 2 contract.
 5. The module ranks one decision event at a time. It keeps no memory between calls,
    so "has this payment already been skipped twice?" style learning is not modelled.
+6. **Dynamic scheduling reallocates service, it does not create it.** Over the formal
+   30-seed set S2 raises URGENT/HIGH completion substantially in the two heaviest
+   stress scenarios but *lowers* NORMAL completion there (−4.8 pp in `payment_surge`,
+   −6.2 pp in `large_payments`) and raises the NORMAL overdue rate (+3.4 pp / +5.9 pp).
+   Total completion still rises. Raising `weight_aging` does not repair this; setting
+   `weight_funding > 0` partly does. Details and numbers:
+   [`docs/proposal_alignment.md`](docs/proposal_alignment.md).

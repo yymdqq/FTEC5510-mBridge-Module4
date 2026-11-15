@@ -1,0 +1,14 @@
+# Module 4 (FTEC5510 Group 12) - dynamic payment ranking
+#
+# The module uses the Python standard library only, so this file has no
+# installable dependencies. It is kept because the team delivery checklist asks
+# every module for a dependency declaration.
+#
+#   Python >= 3.10   (uses PEP 604 `X | None` annotations)
+#   Tested with      CPython 3.12
+#
+# Optional, only needed if Module 3 (third-party free as well) is run through
+# `run_module4.py integrate`; it lives in the Module 3 folder, not here.
+#
+# Install:  none required
+# Verify:   python run_module4.py selftest
