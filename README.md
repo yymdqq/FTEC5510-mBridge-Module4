@@ -16,7 +16,7 @@ Python **standard library only** — no third-party packages.
 ## 1. Quick start
 
 ```bash
-cd 第四模块
+cd module4
 
 # 1. hand-checkable ranking cases (score table + before/after + variants)
 python run_module4.py demo
@@ -43,7 +43,7 @@ modules with (Python 3.10+; only `dataclasses`/`typing` syntax from 3.10 is used
 
 ## 2. What is delivered
 
-| Deliverable (分工.docx, module 4) | Where it lives |
+| Deliverable  | Where it lives |
 |---|---|
 | `rank_payments` and a call example | `module4_rank.py`, `m4rank/ranking.py`, §5 below |
 | Scoring formula, parameter table and score detail | `docs/scoring_formula.md`; the `rank --csv` detail table |
